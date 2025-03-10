@@ -1,98 +1,107 @@
-/* General Page Styling */
 body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f4f4f4, #e0e0e0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #1e293b; /* Dark slate background */
+  color: #ffffff; /* White text */
 }
 
-/* Centered Container */
 .container {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  min-height: 100vh;
+  background: #334155; /* Dark card background */
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  max-width: 600px;
+  margin: 50px auto;
+}
+
+h1, h2, h3 {
   text-align: center;
-  width: 420px;
-  max-width: 90%;
+  margin-bottom: 15px;
+  color: #d1a054; /* Soft gold headings */
 }
 
-/* Headings */
-h1, h2 {
-  color: #333;
-  font-weight: 600;
-}
-
-/* Input Fields */
-.input-box {
+.input-box,
+.font-select {
   width: 100%;
   padding: 12px;
-  margin: 12px 0;
-  border: 2px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-  transition: 0.3s ease-in-out;
-}
-
-.input-box:focus {
-  border-color: #007bff;
+  margin-bottom: 10px;
+  border: 2px solid #d1a054;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
   outline: none;
-  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+  transition: border-color 0.3s ease;
 }
 
-/* Buttons */
+.input-box:focus, .font-select:focus {
+  border-color: #facc15; /* Highlight gold on focus */
+}
+
 .button {
-  padding: 12px 18px;
-  margin: 12px 5px;
+  width: 100%;
+  background: #d1a054; /* Soft gold */
   border: none;
-  border-radius: 6px;
-  color: white;
+  color: #1e293b; /* Dark text for contrast */
+  padding: 12px 20px;
+  border-radius: 25px;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: 500;
-  transition: 0.3s ease-in-out;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: bold;
 }
 
-/* Individual Button Colors */
+.button:hover {
+  background: #facc15; /* Brighter gold on hover */
+  transform: translateY(-2px);
+}
+
 .add-button {
-  background-color: #007bff;
+  background: #ffffff;
+  color: #1e293b;
+  border: 2px solid #d1a054;
 }
 
 .generate-button {
-  background-color: #28a745;
-}
-
-.download-button {
-  background-color: #5c08ed;
-  text-decoration: none;
-  display: inline-block;
-}
-
-/* Hover Effects */
-.add-button:hover {
-  background-color: #0056b3;
+  background: #d1a054;
 }
 
 .generate-button:hover {
-  background-color: #218838;
+  background: #facc15;
 }
 
-.download-button:hover {
-  background-color: #3e06b1;
+.download-button {
+  background: #facc15; /* Emphasized download button */
+  color: #1e293b;
 }
 
-/* Responsive Design */
-@media screen and (max-width: 500px) {
-  .container {
-    width: 90%;
-    padding: 20px;
-  }
+.download-section {
+  margin-top: 30px;
+  text-align: center;
+}
 
-  .button {
-    width: 100%;
-    margin: 10px 0;
-  }
+label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="color"] {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  outline: none;
+  background: #d1a054;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+input[type="color"]:hover {
+  transform: scale(1.05);
 }

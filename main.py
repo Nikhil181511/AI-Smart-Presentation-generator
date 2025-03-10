@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from pptx import Presentation
 from pptx.util import Inches, Pt
+from pptx.dml.color import RGBColor
 import requests
 import wikipedia
 import spacy
@@ -24,24 +25,19 @@ app.add_middleware(
 # Load NLP model
 nlp = spacy.load("en_core_web_sm")
 
-# API Configurations
+# Pexels API Key (Replace with a valid API key)
 PEXELS_API_KEY = "mYGJaFjke2BYgo5GtFZHP5HbAS5TGj5ad2LX5EPbIPeb7FaMZIkTRreK"
-DUCKDUCKGO_API_URL = "https://api.duckduckgo.com/"
 
-# Input model for topic and optional subtopics
+# Input model with theme customization
 class TopicInput(BaseModel):
     topic: str
-    subtopics: list[str] = []  # Optional list of user-defined subtopics
-
-def get_images(query, num_images=5):
-    headers = {"Authorization": PEXELS_API_KEY}
-    params = {"query": query, "per_page": num_images}
-    response = requests.get("https://api.pexels.com/v1/search", headers=headers, params=params)
-    if response.status_code == 200:
-        return [photo['src']['medium'] for photo in response.json().get('photos', [])]
-    return []
+    subtopics: list[str] = []
+    bg_color: str = "#FFFFFF"  # Default: White
+    text_color: str = "#000000"  # Default: Black
+    font_style: str = "Times New Roman"  # Default font
 
 def fetch_wikipedia_content(topic):
+    """Fetch Wikipedia summary content."""
     try:
         summary = wikipedia.summary(topic, sentences=5)
         content = summary.split(". ")
@@ -49,9 +45,19 @@ def fetch_wikipedia_content(topic):
     except Exception:
         return ["No relevant data found."]
 
-def get_general_subtopics():
-    """General subtopics valid for all topics."""
-    return ["Introduction", "Key Features", "Benefits", "Challenges", "Future Scope"]
+def fetch_images(query, num_images=1):
+    """Fetch images from Pexels."""
+    headers = {"Authorization": PEXELS_API_KEY}
+    params = {"query": query, "per_page": num_images}
+    response = requests.get("https://api.pexels.com/v1/search", headers=headers, params=params)
+    if response.status_code == 200:
+        return [photo["src"]["medium"] for photo in response.json().get("photos", [])]
+    return []
+
+def hex_to_rgb(hex_color):
+    """Convert HEX color to RGB for PowerPoint compatibility."""
+    hex_color = hex_color.lstrip("#")
+    return RGBColor(int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16))
 
 @app.post("/generate_ppt/")
 def generate_ppt(input_data: TopicInput):
@@ -63,60 +69,84 @@ def generate_ppt(input_data: TopicInput):
     presentation.slide_width = Inches(16)
     presentation.slide_height = Inches(9)
 
+    # Convert colors from HEX to RGB
+    bg_rgb = hex_to_rgb(input_data.bg_color)
+    text_rgb = hex_to_rgb(input_data.text_color)
+
+    subtopics = input_data.subtopics or ["Introduction", "Key Features", "Benefits", "Challenges", "Future Scope"]
+
+    # Fetch images for the main topic
+    topic_images = fetch_images(topic, num_images=len(subtopics))
+
     # Title Slide
     slide = presentation.slides.add_slide(presentation.slide_layouts[0])
-    slide.shapes.title.text = topic
-    slide.placeholders[1].text = "AI-Generated Presentation"
+    slide.background.fill.solid()
+    slide.background.fill.fore_color.rgb = bg_rgb
 
-    images = get_images(topic, num_images=4)
-    subtopics = input_data.subtopics if input_data.subtopics else get_general_subtopics()
-    used_content = set()
+    title = slide.shapes.title
+    title.text = topic
+    title.text_frame.paragraphs[0].font.color.rgb = text_rgb
+    title.text_frame.paragraphs[0].font.name = input_data.font_style
+
+    subtitle = slide.placeholders[1]
+    subtitle.text = "AI-Generated Presentation"
+    subtitle.text_frame.paragraphs[0].font.color.rgb = text_rgb
+    subtitle.text_frame.paragraphs[0].font.name = input_data.font_style
 
     for idx, subtopic in enumerate(subtopics):
         slide = presentation.slides.add_slide(presentation.slide_layouts[5])
-        slide.shapes.title.text = f"{subtopic} - {topic}".strip()
+        slide.background.fill.solid()
+        slide.background.fill.fore_color.rgb = bg_rgb
 
-        content = fetch_wikipedia_content(f"{topic} {subtopic}")
-        filtered_content = [point for point in content if point not in used_content and "No relevant data found" not in point]
-        used_content.update(filtered_content)
+        title = slide.shapes.title
+        title.text = f"{subtopic} - {topic}"
+        title.text_frame.paragraphs[0].font.color.rgb = text_rgb
+        title.text_frame.paragraphs[0].font.name = input_data.font_style
 
-        if not filtered_content:
-            filtered_content = ["No relevant data found."]
-
-        # Adjust text box size to prevent overflow
-        text_box = slide.shapes.add_textbox(Inches(1), Inches(2), Inches(9), Inches(5))
+        text_box = slide.shapes.add_textbox(Inches(1), Inches(2), Inches(10), Inches(4))
         text_frame = text_box.text_frame
         text_frame.word_wrap = True
         text_frame.text = f"{subtopic} on {topic}:"
+        text_frame.paragraphs[0].font.color.rgb = text_rgb
+        text_frame.paragraphs[0].font.name = input_data.font_style
 
-        for point in filtered_content[:4]:  # Max 4 bullet points
+        for point in fetch_wikipedia_content(f"{topic} {subtopic}")[:4]:
             p = text_frame.add_paragraph()
             p.text = f"- {point}"
-            p.font.size = Pt(22)
-            p.font.name = "Arial"
+            p.font.size = Pt(20)
+            p.font.color.rgb = text_rgb
+            p.font.name = input_data.font_style
 
-        # Place image on the right side (avoiding text overlap)
-        if idx < len(images):
+        # Add Image if available
+        if idx < len(topic_images):
             try:
-                img_data = requests.get(images[idx]).content
+                img_data = requests.get(topic_images[idx]).content
                 image_stream = BytesIO(img_data)
-                slide.shapes.add_picture(image_stream, Inches(11), Inches(2), width=Inches(4), height=Inches(3))
+                slide.shapes.add_picture(image_stream, Inches(11), Inches(2), width=Inches(4))
             except Exception as e:
                 print(f"Error loading image {idx}: {e}")
 
     # Conclusion Slide
     slide = presentation.slides.add_slide(presentation.slide_layouts[5])
+    slide.background.fill.solid()
+    slide.background.fill.fore_color.rgb = bg_rgb
+
     slide.shapes.title.text = "Conclusion"
-    
+    slide.shapes.title.text_frame.paragraphs[0].font.color.rgb = text_rgb
+    slide.shapes.title.text_frame.paragraphs[0].font.name = input_data.font_style
+
     text_box = slide.shapes.add_textbox(Inches(1), Inches(2), Inches(14), Inches(4))
     text_frame = text_box.text_frame
     text_frame.text = "Key Takeaways:"
-    
+    text_frame.paragraphs[0].font.color.rgb = text_rgb
+    text_frame.paragraphs[0].font.name = input_data.font_style
+
     for subtopic in subtopics:
         p = text_frame.add_paragraph()
-        p.text = f"- {subtopic.strip()}"
+        p.text = f"- {subtopic}"
         p.font.size = Pt(22)
-        p.font.name = "Arial"
+        p.font.color.rgb = text_rgb
+        p.font.name = input_data.font_style
 
     # Save the presentation
     ppt_folder = "generated_ppts"
