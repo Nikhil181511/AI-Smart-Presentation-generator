@@ -1,0 +1,98 @@
+/* General Page Styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f4f4f4, #e0e0e0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+/* Centered Container */
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 420px;
+  max-width: 90%;
+}
+
+/* Headings */
+h1, h2 {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Input Fields */
+.input-box {
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: 0.3s ease-in-out;
+}
+
+.input-box:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Buttons */
+.button {
+  padding: 12px 18px;
+  margin: 12px 5px;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s ease-in-out;
+}
+
+/* Individual Button Colors */
+.add-button {
+  background-color: #007bff;
+}
+
+.generate-button {
+  background-color: #28a745;
+}
+
+.download-button {
+  background-color: #5c08ed;
+  text-decoration: none;
+  display: inline-block;
+}
+
+/* Hover Effects */
+.add-button:hover {
+  background-color: #0056b3;
+}
+
+.generate-button:hover {
+  background-color: #218838;
+}
+
+.download-button:hover {
+  background-color: #3e06b1;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 500px) {
+  .container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .button {
+    width: 100%;
+    margin: 10px 0;
+  }
+}
