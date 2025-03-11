@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
@@ -10,6 +10,20 @@ const App = () => {
   const [fontStyle, setFontStyle] = useState("Arial");
   const [loading, setLoading] = useState(false);
   const [pptUrl, setPptUrl] = useState(null);
+
+  useEffect(() => {
+    const bubbleContainer = document.querySelector(".bubble-background");
+
+    for (let i = 0; i < 30; i++) {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.style.width = `${Math.random() * 60 + 20}px`;
+      bubble.style.height = bubble.style.width;
+      bubble.style.left = `${Math.random() * 100}vw`;
+      bubble.style.animationDuration = `${Math.random() * 10 + 5}s`;
+      bubbleContainer.appendChild(bubble);
+    }
+  }, []);
 
   const handleAddSubtopic = () => {
     if (subtopics[subtopics.length - 1].trim() !== "") {
@@ -48,6 +62,8 @@ const App = () => {
 
   return (
     <div className="container">
+      <div className="bubble-background"></div>
+
       <h1>🧠 AI-Powered PPT Generator 📊</h1>
 
       <h3>What's your topic of interest? 🤔</h3>
@@ -90,7 +106,11 @@ const App = () => {
       />
 
       <label>🎨 Choose a Creative Font:</label>
-      <select value={fontStyle} onChange={(e) => setFontStyle(e.target.value)} className="font-select">
+      <select
+        value={fontStyle}
+        onChange={(e) => setFontStyle(e.target.value)}
+        className="font-select"
+      >
         <option value="Arial">🖋 Classic - Arial</option>
         <option value="Times New Roman">📜 Elegant - Times New Roman</option>
         <option value="Verdana">🎯 Clean - Verdana</option>

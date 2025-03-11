@@ -162,4 +162,4 @@ async def download_ppt(filename: str):
     file_path = os.path.join(ppt_folder, filename)
     if os.path.exists(file_path):
         return FileResponse(file_path, media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation", filename=filename)
-    raise HTTPException(status_code=404, detail="File not found")
+    raise HTTPException(status_code=404, detail="File not found")
