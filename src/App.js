@@ -32,12 +32,13 @@ const App = () => {
     setLoading(true);
     try {
 const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/", {
-        topic,
-        subtopics: subtopics.filter((s) => s.trim() !== ""),
-        bg_color: bgColor.replace("#", ""),
-        text_color: textColor.replace("#", ""),
-        font_style: fontStyle,
-      });
+  topic,
+  subtopics: subtopics.filter((s) => s.trim() !== ""),
+  bg_color: bgColor,      // Don't strip #
+  text_color: textColor,  // Don't strip #
+  font_style: fontStyle,
+});
+
       setPptUrl(response.data.ppt_url);
     } catch (error) {
       console.error("Error generating PPT:", error);
