@@ -31,13 +31,13 @@ const App = () => {
 
     setLoading(true);
     try {
-const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/", {
-  topic,
-  subtopics: subtopics.filter((s) => s.trim() !== ""),
-  bg_color: bgColor,      // Don't strip #
-  text_color: textColor,  // Don't strip #
-  font_style: fontStyle,
-});
+      const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/", {
+        topic,
+        subtopics: subtopics.filter((s) => s.trim() !== ""),
+        bg_color: bgColor,
+        text_color: textColor,
+        font_style: fontStyle,
+      });
 
       setPptUrl(response.data.ppt_url);
     } catch (error) {
@@ -49,21 +49,21 @@ const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/
 
   return (
     <div className="container">
-      <h1>AI-Powered PPT Generator </h1>
+      <h1>AI-Powered Presentation Generator 🧠</h1>
 
       <div className="form-card">
-        <h3>What's your topic of interest ? </h3>
+        <h3>What's your topic of interest?</h3>
         <input
           type="text"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          placeholder="Enter your topic"
+          placeholder="e.g., Artificial Intelligence"
           className="input-box"
         />
       </div>
 
       <div className="form-card">
-        <h2>Want to add your points?</h2>
+        <h2>Add Subtopics (Optional)</h2>
         {subtopics.map((subtopic, index) => (
           <input
             key={index}
@@ -80,7 +80,8 @@ const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/
       </div>
 
       <div className="form-card">
-        <h2>How would you like to style your presentation ?</h2>
+        <h2>Customize Presentation Style</h2>
+
         <div className="color-selector">
           <div className="color-field">
             <label>Background Color:</label>
@@ -90,7 +91,6 @@ const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/
               onChange={(e) => setBgColor(e.target.value)}
             />
           </div>
-          
           <div className="color-field">
             <label>Text Color:</label>
             <input
@@ -101,7 +101,7 @@ const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/
           </div>
         </div>
 
-        <label>🎨 Choose a Creative Font:</label>
+        <label>Choose a Font Style:</label>
         <select
           value={fontStyle}
           onChange={(e) => setFontStyle(e.target.value)}
