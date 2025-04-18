@@ -31,7 +31,7 @@ const App = () => {
 
     setLoading(true);
     try {
-const response = await axios.post("https://scgbackend.onrender.com", {
+const response = await axios.post("https://scgbackend.onrender.com/generate_ppt/", {
         topic,
         subtopics: subtopics.filter((s) => s.trim() !== ""),
         bg_color: bgColor.replace("#", ""),
