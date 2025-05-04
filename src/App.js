@@ -39,49 +39,48 @@ const App = () => {
         font_style: fontStyle,
       });
 
-      setPptUrl(response.data.ppt_url);
+    setPptUrl(response.data.ppt_url);
     } catch (error) {
-      console.error("Error generating PPT:", error);
-      alert("Failed to generate PPT. Please try again.");
+      console.error("Error generating presentation:", error);
+      alert("Unable to generate presentation. Please try again later.");
     }
     setLoading(false);
   };
 
   return (
     <div className="container">
-      <h1>AI-Powered Presentation Generator 🧠</h1>
+      <h1>Smart Presentation Generator</h1>
 
       <div className="form-card">
-        <h3>What's your topic of interest?</h3>
+        <h3>Define Your Presentation Topic</h3>
         <input
           type="text"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          placeholder="e.g., Artificial Intelligence"
+          placeholder="Enter your main topic or title"
           className="input-box"
         />
       </div>
 
       <div className="form-card">
-        <h2>Add Subtopics (Optional)</h2>
+        <h2>Include Key Points</h2>
         {subtopics.map((subtopic, index) => (
           <input
             key={index}
             type="text"
             value={subtopic}
             onChange={(e) => handleSubtopicChange(index, e.target.value)}
-            placeholder={`Subtopic ${index + 1}`}
+            placeholder={`Key point ${index + 1}`}
             className="input-box"
           />
         ))}
         <button onClick={handleAddSubtopic} className="button add-button">
-          ➕ Add Subtopic
+          + Add Key Point
         </button>
       </div>
 
       <div className="form-card">
-        <h2>Customize Presentation Style</h2>
-
+        <h2>Customize Your Design</h2>
         <div className="color-selector">
           <div className="color-field">
             <label>Background Color:</label>
@@ -91,6 +90,7 @@ const App = () => {
               onChange={(e) => setBgColor(e.target.value)}
             />
           </div>
+
           <div className="color-field">
             <label>Text Color:</label>
             <input
@@ -101,16 +101,16 @@ const App = () => {
           </div>
         </div>
 
-        <label>Choose a Font Style:</label>
+        <label>Typography Style:</label>
         <select
           value={fontStyle}
           onChange={(e) => setFontStyle(e.target.value)}
           className="font-select"
         >
-          <option value="Arial">Classic - Arial</option>
-          <option value="Times New Roman">Elegant - Times New Roman</option>
-          <option value="Verdana">Clean - Verdana</option>
-          <option value="Courier New">Retro - Courier New</option>
+          <option value="Arial">Professional (Arial)</option>
+          <option value="Times New Roman">Traditional (Times New Roman)</option>
+          <option value="Verdana">Modern (Verdana)</option>
+          <option value="Courier New">Technical (Courier New)</option>
         </select>
 
         <button
@@ -118,15 +118,15 @@ const App = () => {
           className="button generate-button"
           disabled={loading}
         >
-          {loading ? "Generating..." : "🚀 Generate PPT"}
+          {loading ? "Creating Presentation..." : "Generate Presentation"}
         </button>
       </div>
 
       {pptUrl && (
         <div className="download-section">
-          <h3>Your presentation is ready! 🎉</h3>
+          <h3>Your presentation is ready!</h3>
           <a href={pptUrl} download className="button download-button">
-            📥 Download PPT
+            Download Presentation
           </a>
         </div>
       )}
